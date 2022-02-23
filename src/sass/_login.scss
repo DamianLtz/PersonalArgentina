@@ -1,0 +1,98 @@
+.bg-login {
+  background-color: $color-negro;
+}
+
+.container-login {
+  display: grid;
+  place-items: center;
+  grid-template-rows: 1fr;
+  height: 100vh;
+}
+
+.bg-inputs-login {
+  background-color: $background-container-login;
+  border-radius: 8px;
+}
+
+.logo-login {
+  width: 300px;
+}
+
+.container-form {
+  padding: 0 1.5rem;
+  @media (min-width: 576px) {
+    padding: 0 6rem;
+  }
+  @media (min-width: 991px) {
+    padding: 0 5rem;
+  }
+  @media (min-width: 1200px) {
+    padding: 0 6rem;
+  }
+  @media (min-width: 1400px) {
+    padding: 0 10rem;
+  }
+}
+
+.container-form-control {
+  background-color: $background-inputs-login;
+  border: 1px solid transparent;
+  border-radius: 5px 5px 0 0;
+  padding: 0.75rem;
+  transition: all 0.35s ease-in-out;
+  color: $color-blanco;
+  &::placeholder {
+    color: $color-placeholder-login;
+  }
+  &:focus{
+      background-color: $background-inputs-login;
+      color: $color-blanco;
+      border: 1px solid transparent;
+      border-bottom: 1px solid $btn-form-color;
+  }
+}
+
+.btn-form {
+  padding: 0.75rem;
+  background-color: $btn-form-color;
+  border-color: #000000;
+  transition: background-color 0.15s ease-in-out;
+  &:hover {
+    background-color: $btn-form-color-hover;
+  }
+}
+
+.btn-form-2 {
+  padding: 0.75rem;
+  background-color: transparent;
+  border-color: $btn-color-text;
+  color: $btn-color-text;
+  transition: all 0.15s ease-in-out;
+  &:hover {
+    background-color: rgba(24, 175, 223, 0.04);
+    color: $btn-form-color-2;
+    border-color: $btn-form-color-2;
+  }
+}
+
+.text-register{
+    color: $btn-form-color;
+}
+
+.text-error{
+  color: $color-red;
+}
+
+.error-icon{
+  width: 20px;
+  height: 20px;
+}
+
+.question-icon{
+    width: 24px;
+    height: 24px;
+}
+
+.bg-footer-login{
+    background-color: $background-container-login;
+}

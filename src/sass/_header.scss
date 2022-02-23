@@ -1,0 +1,31 @@
+.bg-header{
+    background-color: $color-dark-grey;
+}
+
+.link-header{
+    transition: background-color 0.2s ease-in-out;
+    cursor: default;
+    &:hover{
+        background-color: $color-grey;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+}
+
+.icons-header{
+    width: 32px;
+    height: 32px;
+}
+
+.text-iniciar-sesion{
+    color: $color-blanco;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out;
+    &:hover{
+        color: $btn-form-color-2;
+    }
+}
+
+.user-logged{
+    cursor: pointer;
+}

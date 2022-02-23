@@ -1,0 +1,37 @@
+.bg-header-checkout{
+    background-color: $color-negro;
+}
+
+.lock-icon{
+    width: 20px;
+    height: auto;
+}
+
+.arrow-left{
+    width: 24px;
+    height: auto;
+}
+
+.caret-down-icon{
+    width: 40px;
+    height: auto;
+    transition: transform 0.3s ease-in-out;
+}
+
+.bg-checkout{
+    background-color: $bg-checkout;
+    padding: 2rem 3rem;
+}
+
+.img-product-checkout{
+    width: 160px;
+    height: auto;
+}
+
+.show-up{
+    transform: rotate(180deg);
+}
+
+.field-error{
+    border: 1px solid $color-red;
+}

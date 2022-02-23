@@ -1,0 +1,50 @@
+//ProfileImg:
+
+.container-profile {
+  background: linear-gradient(100deg, #00b0ea, #57dfb7);
+  //   border: 1px solid rgba(27, 27, 29, 0.35);
+  border-radius: 3px;
+  padding: 2rem;
+}
+
+.bg-profile-img {
+  width: 128px;
+  background-color: $color-violet;
+}
+
+.bg-welcome-profile {
+  display: flex;
+  background-color: $color-dark-blue;
+  border-radius: 16px;
+  .border-welcome-profile {
+    border-left: 4px solid;
+    border-image: linear-gradient(180deg, #04a6db, #22e3b9) 1 100%;
+    border-radius: 2px;
+  }
+  .text-welcome {
+    line-height: 2.25rem;
+  }
+}
+
+.opcion-seleccionada {
+  position: relative;
+  span {
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    background: linear-gradient(180deg, #04a6db, #22e3b9);
+    height: 2px;
+    width: 100%;
+    transition: all 0.4s ease-in-out;
+    transform: scale(0);
+  }
+  &:hover {
+    span {
+      transform: scale(1);
+    }
+  }
+}
+
+.img-producto-historial {
+  width: 240px;
+}

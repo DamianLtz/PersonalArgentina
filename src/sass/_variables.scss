@@ -1,0 +1,65 @@
+$font-proyect: "Roboto", sans-serif;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+p {
+  margin: 0;
+  padding: 0;
+  font-family: $font-proyect;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul,
+li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  cursor: default;
+}
+
+button {
+  font-family: $font-proyect;
+}
+
+// ------------------- Colores ------------------- //
+
+$color-negro: #121212;
+$color-blanco: #ffffff;
+$color-dark-grey: #1b1b1d;
+$color-grey: #272727;
+$color-light-blue: #297ad6;
+$color-dark-blue: #001036;
+$color-pink: #a92865;
+$color-violet: #5b51e9;
+$color-green: #169f4e;
+$background-container-login: #191919;
+$background-inputs-login: #373737;
+$color-placeholder-login: #9ca2a7;
+$btn-form-color: #80a5ff;
+$btn-form-color-hover: #5789ff;
+$btn-color-text: #80a2f2;
+$btn-form-color-2: #18afdf;
+$color-red: #ef4444;
+$bg-checkout: #f5f5f5;
+$color-orange: #d68b00;
+
+// ------------------- Clases ------------------- //
+
+.text-personal {
+  color: $color-dark-blue;
+}
+
+.fs-7 {
+  font-size: 14px;
+}

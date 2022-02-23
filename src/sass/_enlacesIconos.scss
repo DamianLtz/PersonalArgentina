@@ -1,0 +1,15 @@
+.icon-enlace{
+    width: 32px;
+    height: 32px;
+}
+
+.text-enlace{
+    color: $color-dark-blue;
+    &:hover{
+        color: $color-dark-blue;
+    }
+}
+
+.icon-col-mob{
+    width: 50%;
+}

@@ -1,0 +1,91 @@
+.bg-banner-tienda {
+  background-image: url(../img/Tienda/bg-tienda.svg);
+  background-repeat: no-repeat;
+}
+
+.icons-banner-tienda {
+  width: 32px;
+  height: 32px;
+}
+
+.product-preview-card {
+  width: 210px;
+  height: 210px;
+}
+
+.tag-lanzamiento {
+  background-color: rgba(91, 81, 233, 0.12);
+  color: $color-violet;
+  width: fit-content;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+}
+
+.caret-down {
+  width: 32px;
+  height: 32px;
+}
+
+.container-opciones {
+  border: 1px solid rgba(204, 204, 204, 0.75);
+  background-color: $color-blanco;
+  padding: 1.5rem;
+  p {
+    font-size: 1.25rem;
+    font-weight: 300;
+  }
+}
+
+.marca {
+  width: 96px;
+  height: 96px;
+}
+
+.banner-tienda-telecom {
+  background-color: rgba(60, 1, 160, 0.24);
+}
+
+.container-text-banner-tienda {
+  position: absolute; 
+  @media (min-width: 991px) {
+    top: 4px;
+    left: 150px;
+  }
+  @media (min-width: 1200px) {
+    top: 24px;
+    left: 175px;
+  }
+  @media (min-width: 1400px) {
+    top: 64px;
+    left: 300px;
+  }
+  p {
+    color: $color-blanco;
+  }
+}
+
+.img-producto{
+  width: 512px;
+  height: auto;
+}
+
+.rounded-color{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid $color-negro;
+}
+
+.tag-almacenamiento{
+  border: 1px solid $color-dark-blue;
+  border-radius: 4px;
+}
+
+.check{
+  width: 28px;
+  height: 28px;
+}
+
+.check-text{
+  color: $color-green;
+}
