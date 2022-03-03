@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
+import { addDoc, getDocs } from "firebase/firestore";
 import expresiones from "./common/expresionesRegulares";
 import ErrorBDD from "./common/ErrorBDD";
 // ---------------- IMG ---------------- //
@@ -9,80 +11,96 @@ import Question from "../img/login/question.svg";
 
 const Register = () => {
   let navigate = useNavigate();
-  const [userExists, setUserExist] = useState(false); // comprueba si el usuario existe en la "BDD" (local storage en este caso).
+  const { usersCollectionRef } = useUserContext();
+  const [userExists, setUserExist] = useState(false);
+  const [btnIsDisabled, setBtnIsDisabled] = useState(false);
 
-  const obtenerUsuariosRegistrados = JSON.parse(
-    localStorage.getItem("usuarios registrados")
-  );
+  // ----------------------------- Funciones CRUD Firebase ----------------------------- //
 
-  if (!obtenerUsuariosRegistrados) {
-    localStorage.setItem("usuarios registrados", JSON.stringify([]));
-  }
-  const redirectToCarrito = (valores) => {
-    const productoGuardado = JSON.parse(
-      localStorage.getItem("Celular Seleccionado")
-    );
-    if (productoGuardado) {
-      const usuario = {
-        user: parseInt(valores.telefono),
-        password: parseInt(valores.password),
-        carrito: [
-          {
-            image: productoGuardado.image,
-            nombre: productoGuardado.nombre,
-            precio: productoGuardado.precio,
-          },
-        ],
-        datosPersonales: [{ nombre: null, apellido: null, telefono: null }],
-        historialCompras: [],
-      };
-      if (!obtenerUsuariosRegistrados.length) {
-        obtenerUsuariosRegistrados.push(usuario);
-        localStorage.setItem(
-          "usuarios registrados",
-          JSON.stringify(obtenerUsuariosRegistrados)
-        );
-        localStorage.setItem("usuario logueado", JSON.stringify(usuario));
-        localStorage.removeItem("Celular Seleccionado");
-        navigate("/checkout");
-      } else {
-        obtenerUsuariosRegistrados.push(usuario);
-        localStorage.setItem(
-          "usuarios registrados",
-          JSON.stringify(obtenerUsuariosRegistrados)
-        );
-        localStorage.setItem("usuarios registrados", JSON.stringify(usuario));
-        localStorage.setItem("usuario logueado", JSON.stringify(usuario));
-        localStorage.removeItem("Celular Seleccionado");
-        navigate("/checkout");
-      }
-    } else {
-      const usuario = {
-        user: parseInt(valores.telefono),
-        password: parseInt(valores.password),
-        carrito: [],
-        datosPersonales: { nombre: null, apellido: null, telefono: null },
-        historialCompras: [],
-      };
-      if (obtenerUsuariosRegistrados) {
-        const existeUsuario = obtenerUsuariosRegistrados.find(
-          (data) => data.user === usuario.user
-        );
-        if (!existeUsuario) {
-          obtenerUsuariosRegistrados.push(usuario);
-          localStorage.setItem(
-            "usuarios registrados",
-            JSON.stringify(obtenerUsuariosRegistrados)
+  const createUser = async (user) => {
+    await addDoc(usersCollectionRef, user);
+  };
+
+  // ----------------------------- Obtener Users de Firebase ----------------------------- //
+
+  const redirectToCarrito = async (valores) => {
+    try {
+      const data = await getDocs(usersCollectionRef);
+      const users = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const productoGuardado = JSON.parse(
+        sessionStorage.getItem("Celular Seleccionado")
+      );
+      if (productoGuardado) {
+        const usuario = {
+          user: parseInt(valores.telefono),
+          password: parseInt(valores.password),
+          carrito: [
+            {
+              image: productoGuardado.image,
+              nombre: productoGuardado.nombre,
+              precio: productoGuardado.precio,
+            },
+          ],
+          datosPersonales: { nombre: null, apellido: null, telefono: null },
+          historialCompras: [],
+        };
+        if (users) {
+          const existeUsuario = users.find(
+            (data) => data.user === usuario.user
           );
-          localStorage.setItem("usuario logueado", JSON.stringify(usuario));
-          navigate("/");
+          if (!existeUsuario) {
+            createUser(usuario);
+            sessionStorage.removeItem("Celular Seleccionado");
+            localStorage.setItem(
+              "usuario logueado",
+              JSON.stringify(usuario.user)
+            );
+            navigate("/checkout");
+          } else {
+            localStorage.setItem(
+              "usuario logueado",
+              JSON.stringify(usuario.user)
+            );
+            navigate("/checkout");
+          }
+        }
+      } else {
+        // ---------------- Si NO HAY producto guardado en SessionStorage ---------------- //
+        const usuario = {
+          user: parseInt(valores.telefono),
+          password: parseInt(valores.password),
+          carrito: [],
+          datosPersonales: { nombre: null, apellido: null, telefono: null },
+          historialCompras: [],
+        };
+        if (users) {
+          const existeUsuario = users.find(
+            (data) => data.user === usuario.user
+          );
+          if (!existeUsuario) {
+            createUser(usuario);
+            localStorage.setItem(
+              "usuario logueado",
+              JSON.stringify(usuario.user)
+            );
+            navigate("/");
+          } else {
+            setUserExist(true);
+            setTimeout(() => {
+              setBtnIsDisabled(false);
+              setUserExist(false);
+            }, 3000);
+          }
         } else {
-          setUserExist(true);
-          setTimeout(() => {
-            setUserExist(false);
-          }, 3000);
+          createUser(usuario);
+          localStorage.setItem(
+            "usuario logueado",
+            JSON.stringify(usuario.user)
+          );
         }
       }
+    } catch (error) {
+      console.log("El error es en register", error);
     }
   };
 
@@ -116,6 +134,7 @@ const Register = () => {
               }}
               onSubmit={(valores) => {
                 // resetForm();
+                setBtnIsDisabled(true);
                 redirectToCarrito(valores);
               }}>
               {({
@@ -174,7 +193,8 @@ const Register = () => {
                   </div>
                   <button
                     type="submit"
-                    className="btn btn-form w-100 text-dark shadow-none mb-4">
+                    className="btn btn-form w-100 text-dark shadow-none mb-4"
+                    disabled={btnIsDisabled}>
                     Registrarme
                   </button>
                   {userExists ? (

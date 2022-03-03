@@ -6,7 +6,7 @@ const CardBeneficios2 = () => {
       <div className="row">
         {listaBeneficios2.map((card) => {
           return (
-            <div className="col-lg-3" key={card.id}>
+            <div className="col-lg-3 col-md-6 col-sm-6 py-3 py-lg-0" key={card.id}>
               <div className="d-flex flex-column align-items-center">
                 <img src={card.image} alt="" />
                 <h5 className="fw-regular pt-2">{card.title}</h5>

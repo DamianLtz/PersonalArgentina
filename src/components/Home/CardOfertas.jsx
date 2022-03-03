@@ -14,7 +14,7 @@ const CardOfertas = () => {
       <div className="row">
         {listaCards.map((card) => {
           return (
-            <div className="col-lg-4" key={card.id}>
+            <div className="col-lg-4 col-md-6 py-3 py-lg-0" key={card.id}>
               <div className="card">
                 <img src={card.image} className="card-img-top" alt="" />
                 <div className="card-body">

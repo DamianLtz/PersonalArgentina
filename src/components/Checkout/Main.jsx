@@ -1,78 +1,93 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Field } from "formik";
-import ErrorImg from "../../img/Home/uncheck.svg";
+import { useUserContext } from "../../context/UserContext";
+import { getDocs } from "firebase/firestore";
 import expresiones from "../common/expresionesRegulares";
+import Loader from "../common/Loader";
 // ------------------------- IMG ------------------------- //
 import Left from "../../img/checkout/leftBlue.svg";
 import arrow from "../../img/Home/icons-blue/caret-down.svg";
+import ErrorImg from "../../img/Home/uncheck.svg";
 
 const Main = () => {
-  const [visible, setVisible] = useState(false);
-  const [checkbox, setCheckbox] = useState({ checked: false, focused: false });
   let navigate = useNavigate();
-
-  const obtenerDatosLocalStorage = JSON.parse(
+  const [visible, setVisible] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [checkbox, setCheckbox] = useState({ checked: false, focused: false });
+  const userLoggedStorage = JSON.parse(
     localStorage.getItem("usuario logueado")
   );
-  const producto = obtenerDatosLocalStorage.carrito[0];
+  const {
+    user,
+    setUser,
+    updateCartUser,
+    updateShoppingHistory,
+    updateUserInfo,
+    usersCollectionRef,
+    productsCollectionRef,
+  } = useUserContext();
 
-  const terminarTransaccion = (valores, producto) => {
-    const datosDeCompra = {
-      nombre: valores.nombre,
-      apellido: valores.apellido,
-      email: valores.email,
-      direccion: valores.direccion,
-      productoComprado: {
-        nombreProducto: producto.nombre,
-        precioProducto: producto.precio,
-        imagenProducto: producto.image,
-        cantidadProducto: producto.cantidad,
-      },
+  useEffect(() => {
+    if (userLoggedStorage) {
+      setUser(userLoggedStorage);
+    } else {
+      setUser(null);
+    }
+    const getProducts = async () => {
+      const data = await getDocs(productsCollectionRef);
+      setProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
+    const getUsers = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    getProducts();
+    getUsers();
+  }, [setUser, userLoggedStorage, productsCollectionRef, usersCollectionRef]);
+
+  const userExist = users.find((userLogged) => userLogged.user === user);
+  const terminarTransaccion = (valores, producto) => {
     if (checkbox) {
-      obtenerDatosLocalStorage.carrito = [];
-      const replaceDatosPersonales = {
-        ...obtenerDatosLocalStorage,
-        datosPersonales: {
-          nombre: valores.nombre,
-          apellido: valores.apellido,
-          email: valores.email.toLowerCase(),
-          direccion: valores.direccion,
-        },
+      const newUserInfo = {
+        nombre: valores.nombre,
+        apellido: valores.apellido,
+        email: valores.email,
+        direccion: valores.direccion,
       };
-
-      const historialDeCompras = [...obtenerDatosLocalStorage.historialCompras];
-
-      const existeProducto = historialDeCompras.find(
-        (data) =>
-          data.nombreProducto === datosDeCompra.productoComprado.nombreProducto
+      const userShoppingHistory = userExist.historialCompras;
+      const productExist = userShoppingHistory.find(
+        (product) => product.nombre === producto.nombre
       );
-      if (existeProducto) {
-        existeProducto.cantidadProducto++;
-        const replaceCantidad = {
-          ...replaceDatosPersonales,
-          historialCompras: [...replaceDatosPersonales.historialCompras],
-        };
-        localStorage.setItem(
-          "usuario logueado",
-          JSON.stringify(replaceCantidad)
+      if (productExist) {
+        productExist.cantidad++;
+        //debe pasar algo si existe el producto y algo si no existe.
+        const productExistIndex = userShoppingHistory.findIndex(
+          (product) => product.nombre === productExist.nombre
         );
+        if (productExistIndex !== -1) {
+          userShoppingHistory[productExistIndex] = productExist;
+        }
+        updateCartUser(userExist.id, []);
+        updateUserInfo(userExist.id, newUserInfo);
+        updateShoppingHistory(userExist.id, userShoppingHistory);
         navigate("/BuyMessage");
       } else {
-        obtenerDatosLocalStorage.historialCompras.push(
-          datosDeCompra.productoComprado
-        );
-        localStorage.setItem(
-          "usuario logueado",
-          JSON.stringify(replaceDatosPersonales)
-        );
+        userShoppingHistory.push(producto);
+        updateCartUser(userExist.id, []);
+        updateUserInfo(userExist.id, newUserInfo);
+        updateShoppingHistory(userExist.id, userShoppingHistory);
+        navigate("/BuyMessage");
       }
-      navigate("/BuyMessage");
+      // updateCartUser(userExist.id, []);
+      // updateUserInfo(userExist.id, newUserInfo);
+      // updateShoppingHistory(userExist.id, producto);
+      // navigate("/BuyMessage");
     }
   };
 
-  return (
+  return users.length && products.length && userLoggedStorage ? (
     <main className="container py-5">
       <div
         className="d-flex align-items-center"
@@ -87,7 +102,7 @@ const Main = () => {
             <div className="d-flex align-items-center justify-content-between">
               <p className="fs-4 fw-light">Total</p>
               <p className="fs-4">{`$ ${new Intl.NumberFormat("de-DE").format(
-                producto.precio
+                userExist.carrito.precio
               )}`}</p>
             </div>
           </div>
@@ -110,17 +125,17 @@ const Main = () => {
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
               <img
-                src={producto.image}
+                src={userExist.carrito.image}
                 alt=""
                 className="img-product-checkout"
               />
               <div>
-                <p>{producto.nombre}</p>
+                <p>{userExist.carrito.nombre}</p>
                 <p className="text-muted">Cantidad: 1</p>
               </div>
             </div>
             <p className="fs-4">{`$ ${new Intl.NumberFormat("de-DE").format(
-              producto.precio
+              userExist.carrito.precio
             )}`}</p>
           </div>
           <hr className="my-4" />
@@ -138,9 +153,9 @@ const Main = () => {
         <p className="fw-light fs-4">Datos Personales</p>
         <Formik
           initialValues={{
-            nombre: "",
-            apellido: "",
-            email: "",
+            nombre: "Juan",
+            apellido: "Perez",
+            email: "correo@correo.com",
             direccion: "Rivadavia 135",
           }}
           validate={(valores) => {
@@ -165,7 +180,7 @@ const Main = () => {
             return errores;
           }}
           onSubmit={(valores) => {
-            terminarTransaccion(valores, producto);
+            terminarTransaccion(valores, userExist.carrito);
           }}>
           {({
             handleSubmit,
@@ -290,6 +305,8 @@ const Main = () => {
         </Formik>
       </div>
     </main>
+  ) : (
+    <Loader />
   );
 };
 

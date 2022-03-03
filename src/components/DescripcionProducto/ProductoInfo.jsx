@@ -1,73 +1,83 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useUserContext } from "../../context/UserContext";
+import { getDocs } from "firebase/firestore";
 import ScrollReveal from "scrollreveal";
 import { useParams, useNavigate } from "react-router-dom";
-import listaCelulares from "../Data/listaCelulares";
+import Loader from "../common/Loader";
 import Stock from "../common/Stock";
 import SinStock from "../common/SinStock";
 import Tag from "../common/Tag";
 
 const ProductoInfo = () => {
-
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const { updateCartUser, productsCollectionRef, usersCollectionRef } =
+    useUserContext();
   useEffect(() => {
+    const getProducts = async () => {
+      const data = await getDocs(productsCollectionRef);
+      setProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    const getUsers = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    getProducts();
+    getUsers();
     ScrollReveal().reveal("#img-producto", {
       delay: 250,
       distance: "50px",
       duration: 1500,
     });
-  });
+  }, [productsCollectionRef, usersCollectionRef]);
 
   const { id } = useParams();
   let navigate = useNavigate();
 
-  const productoSeleccionado = listaCelulares.find(
-    (listaCelulares) => id === listaCelulares.id
-  );
+  const selectedProduct = products.find((product) => id === product.id);
 
-  const obtenerDatosLocalStorage = JSON.parse(
-    localStorage.getItem("usuario logueado")
-  );
+  const userLogged = JSON.parse(localStorage.getItem("usuario logueado"));
+
+  const userExist = users.find((data) => data.user === userLogged);
 
   const comenzarTransaccion = () => {
-    if (obtenerDatosLocalStorage) {
-      obtenerDatosLocalStorage.carrito.push(productoSeleccionado);
-      localStorage.setItem("usuario logueado", JSON.stringify(obtenerDatosLocalStorage))
+    if (userLogged) {
+      updateCartUser(userExist.id, selectedProduct);
       navigate("/checkout");
     } else {
-      localStorage.setItem(
+      sessionStorage.setItem(
         "Celular Seleccionado",
-        JSON.stringify(productoSeleccionado)
+        JSON.stringify(selectedProduct)
       );
       navigate("/login");
     }
   };
-  return (
+  return products.length ? (
     <div className="container py-5">
       <div className="row">
         <div className="col-lg-6" id="img-producto">
           <img
-            src={productoSeleccionado.image}
-            alt={productoSeleccionado.nombre}
+            src={selectedProduct.image}
+            alt={selectedProduct.nombre}
             className="img-fluid img-producto"
           />
         </div>
         <div className="col-lg-6">
           <div className="d-flex align-items-center">
-            {productoSeleccionado.tag ? (
-              <Tag text={productoSeleccionado.tag} />
-            ) : null}
+            {selectedProduct.tag ? <Tag text={selectedProduct.tag} /> : null}
             <p
               className={`tag-lanzamiento mt-2 fs-7 ${
-                productoSeleccionado.tag ? "mx-2" : ""
+                selectedProduct.tag ? "mx-2" : ""
               }`}>
               Lanzamiento
             </p>
           </div>
-          <h1 className="pt-3">{productoSeleccionado.nombre}</h1>
+          <h1 className="pt-3">{selectedProduct.nombre}</h1>
           <p className="pt-3">
-            {productoSeleccionado.info ? productoSeleccionado.info : "Soon"}
+            {selectedProduct.info ? selectedProduct.info : "Soon"}
           </p>
           <p className="fs-2 py-3">{`$ ${new Intl.NumberFormat("de-DE").format(
-            productoSeleccionado.precio
+            selectedProduct.precio
           )}`}</p>
           <p className="fw-light text-primary pb-2">
             Hasta 6 cuotas sin interés
@@ -78,25 +88,24 @@ const ProductoInfo = () => {
 
           <div className="d-flex align-items-center pt-3">
             <p>
-              Color:{" "}
-              {productoSeleccionado.color ? productoSeleccionado.color : "soon"}
+              Color: {selectedProduct.color ? selectedProduct.color : "soon"}
             </p>
             <div
               className="rounded-color mx-2"
               style={{
-                backgroundColor: productoSeleccionado.colorHex,
+                backgroundColor: selectedProduct.colorHex,
               }}></div>
             <p className="ps-2">
               Almacenamiento:{" "}
               <span className="tag-almacenamiento p-2 fs-7 ms-1">
-                {productoSeleccionado.almacenamiento
-                  ? productoSeleccionado.almacenamiento
+                {selectedProduct.almacenamiento
+                  ? selectedProduct.almacenamiento
                   : "soon"}
               </span>
             </p>
           </div>
-          {productoSeleccionado.stock !== 0 ? <Stock /> : <SinStock />}
-          {productoSeleccionado.stock !== 0 ? (
+          {selectedProduct.stock !== 0 ? <Stock /> : <SinStock />}
+          {selectedProduct.stock !== 0 ? (
             <button
               className="btn btn-primary mt-4 px-4"
               onClick={() => comenzarTransaccion()}>
@@ -106,6 +115,8 @@ const ProductoInfo = () => {
         </div>
       </div>
     </div>
+  ) : (
+    <Loader />
   );
 };
 

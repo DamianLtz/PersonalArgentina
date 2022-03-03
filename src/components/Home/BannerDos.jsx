@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import ScrollReveal from "scrollreveal";
 
-import Banner1 from "../../img/Home/banner2.jpg";
+import Banner1 from "../../img/Home/banner4.jpg";
 import Banner2 from "../../img/Home/banner3.jpg";
 
 const BannerDos = () => {
@@ -26,14 +26,11 @@ const BannerDos = () => {
           <div className="container-text-banner">
             <div>
               <p className="text-light pb-3">#TEAM VERANO</p>
-              <p className="fs-2 fw-light text-light pb-3">
-                Este verano te damos 10 GB <br /> gratis
+              <p className="fs-2 fw-light text-light">
+                Descubrí los últimos <br /> lanzamientos
               </p>
-              <p className="text-light pb-4 fs-7 d-none d-lg-inline-block">
-                Si tenés Conexión Total de Personal, navegá sin gastar los datos
-                de tu
-                <br />
-                plan
+              <p className="text-light pb-5 fs-7 d-none d-lg-inline-block">
+                Accedé a descuentos exclusivos por tener Conexión Total
               </p>
             </div>
             <div className="d-none d-lg-inline-block">

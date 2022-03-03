@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 import { Formik } from "formik";
+import { getDocs } from "firebase/firestore";
 import expresiones from "./common/expresionesRegulares";
 import ErrorBDD from "./common/ErrorBDD";
 // ---------------- IMG ---------------- //
@@ -9,78 +11,74 @@ import Question from "../img/login/question.svg";
 
 const Login = () => {
   let navigate = useNavigate();
+  const { usersCollectionRef, updateCartUser } = useUserContext();
   const [userExists, setUserExist] = useState(true);
-  const redirectToCarrito = (valores) => {
-    const productoGuardado = JSON.parse(
-      localStorage.getItem("Celular Seleccionado")
-    );
-    if (productoGuardado) {
-      const usuario = {
-        user: parseInt(valores.telefono),
-        password: parseInt(valores.password),
-        carrito: [
-          {
-            image: productoGuardado.image,
-            nombre: productoGuardado.nombre,
-            precio: productoGuardado.precio,
-          },
-        ],
-      };
-      const usuariosRegistrados = JSON.parse(
-        localStorage.getItem("usuarios registrados")
+  const [btnIsDisabled, setBtnIsDisabled] = useState(false);
+  // ----------------------------- Obtener Users de Firebase ----------------------------- //
+
+  const redirectToCart = async (valores) => {
+    try {
+      const data = await getDocs(usersCollectionRef);
+      const users = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const productoGuardado = JSON.parse(
+        sessionStorage.getItem("Celular Seleccionado")
       );
-      const existeUsuario = usuariosRegistrados.find(
-        (data) =>
-          data.user === usuario.user && data.password === usuario.password
-      );
-      if (!existeUsuario) {
-        setUserExist(false);
-        setTimeout(() => {
-          setUserExist(true);
-        }, 3000);
-      } else {
-        const replaceDatosUsuario = {
-          ...usuario,
-          datosPersonales: existeUsuario.datosPersonales,
-          historialCompras: existeUsuario.historialCompras,
+      if (productoGuardado) {
+        const usuario = {
+          user: parseInt(valores.telefono),
+          password: parseInt(valores.password),
+          carrito: [
+            {
+              image: productoGuardado.image,
+              nombre: productoGuardado.nombre,
+              precio: productoGuardado.precio,
+            },
+          ],
         };
-        localStorage.setItem(
-          "usuario logueado",
-          JSON.stringify(replaceDatosUsuario)
+        const existeUsuario = users.find(
+          (data) =>
+            data.user === usuario.user && data.password === usuario.password
         );
-        localStorage.removeItem("Celular Seleccionado");
-        navigate("/checkout");
-      }
-    } else {
-      const usuario = {
-        user: parseInt(valores.telefono),
-        password: parseInt(valores.password),
-        carrito: [],
-      };
-      const usuariosRegistrados = JSON.parse(
-        localStorage.getItem("usuarios registrados")
-      );
-      const existeUsuario = usuariosRegistrados.find(
-        (data) =>
-          data.user === usuario.user && data.password === usuario.password
-      );
-      if (!existeUsuario) {
-        setUserExist(false);
-        setTimeout(() => {
-          setUserExist(true);
-        }, 3000);
+        if (!existeUsuario) {
+          setUserExist(false);
+          setTimeout(() => {
+            setUserExist(true);
+          }, 3000);
+        } else {
+          updateCartUser(existeUsuario.id, usuario.carrito);
+          localStorage.setItem(
+            "usuario logueado",
+            JSON.stringify(usuario.user)
+          );
+          sessionStorage.removeItem("Celular Seleccionado");
+          navigate("/checkout");
+        }
       } else {
-        const replaceDatosUsuario = {
-          ...usuario,
-          datosPersonales: existeUsuario.datosPersonales,
-          historialCompras: existeUsuario.historialCompras,
+        const usuario = {
+          user: parseInt(valores.telefono),
+          password: parseInt(valores.password),
+          carrito: [],
         };
-        localStorage.setItem(
-          "usuario logueado",
-          JSON.stringify(replaceDatosUsuario)
+        const existeUsuario = users.find(
+          (data) =>
+            data.user === usuario.user && data.password === usuario.password
         );
-        navigate("/");
+        if (!existeUsuario) {
+          setUserExist(false);
+          setTimeout(() => {
+            setUserExist(true);
+            setBtnIsDisabled(false);
+          }, 3000);
+        } else {
+          localStorage.setItem(
+            "usuario logueado",
+            JSON.stringify(usuario.user)
+          );
+          navigate("/");
+        }
       }
+    } catch (error) {
+      console.log("Error en Login", error);
     }
   };
 
@@ -112,8 +110,9 @@ const Login = () => {
                 }
                 return errores;
               }}
-              onSubmit={(valores) => {
-                redirectToCarrito(valores);
+              onSubmit={async (valores) => {
+                setBtnIsDisabled(true);
+                await redirectToCart(valores);
               }}>
               {({
                 handleSubmit,
@@ -171,7 +170,8 @@ const Login = () => {
                   </div>
                   <button
                     type="submit"
-                    className="btn btn-form w-100 text-dark shadow-none">
+                    className="btn btn-form w-100 text-dark shadow-none"
+                    disabled={btnIsDisabled}>
                     Ingresar
                   </button>
                   {!userExists ? (

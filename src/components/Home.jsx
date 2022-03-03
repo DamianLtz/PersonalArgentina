@@ -15,6 +15,7 @@ import EnlacesIconos from "./Home/EnlacesIconos";
 import Flow from "./Home/Flow";
 import SeccionApps from "./Home/SeccionApps";
 import SeccionAyuda from "./Home/SeccionAyuda";
+// import FirestoreOptions from "./common/FirestoreOptions";
 // import { Outlet } from "react-router-dom";
 
 const Home = () => {
@@ -25,6 +26,7 @@ const Home = () => {
       <main className="container">
         <BannerUno />
         <EnlacesIconos />
+        {/* <FirestoreOptions /> // Envia Productos a Firebase */}
         {/* <Outlet /> */}
         <BannerDos />
         <h2 className="text-center pt-5">

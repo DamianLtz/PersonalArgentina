@@ -8,9 +8,9 @@ const SeccionApps = () => {
       <div className="row mt-4">
         {listaApps.map((card) => {
           return (
-            <div className="col-lg-3" key={card.id}>
+            <div className="col-lg-3 col-md-6 col-sm-6 py-3 py-lg-0" key={card.id}>
               <div className="card">
-                <img src={card.image} className="card-img-top" alt="..." />
+                <img src={card.image} className="card-img-top" alt={card.title} />
                 <div className="card-body">
                   <h5 className="card-title fw-light">{card.title}</h5>
                   <p className="card-text text-personal">{card.info}</p>

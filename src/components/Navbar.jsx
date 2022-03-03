@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
-
 // -------------------Iconos e Img ------------------- //
 
 import Personal from "../img/personal.png";
@@ -11,40 +10,15 @@ import LogOff from "../img/log-off.svg";
 
 const Navbar = () => {
   const { user, setUser, clearUser } = useUserContext();
-
-  const usuarioLogueado = JSON.parse(localStorage.getItem("usuario logueado"));
-  const usuariosRegistrados = JSON.parse(
-    localStorage.getItem("usuarios registrados")
-  );
-
-  const saveChanges = () => {
-    const usuarioActivo = usuarioLogueado.user;
-
-    const indiceDeUsuarioEnRegistros = usuariosRegistrados.findIndex(
-      (usuario) => usuario.user === usuarioActivo
-    );
-    if (indiceDeUsuarioEnRegistros !== -1) {
-      usuariosRegistrados[indiceDeUsuarioEnRegistros] = usuarioLogueado
-      // usuarioEnRegistros.user = usuarioLogueado.user;
-      // usuarioEnRegistros.password = usuarioLogueado.password;
-      // usuarioEnRegistros.carrito = usuarioLogueado.carrito;
-      // usuarioEnRegistros.datosPersonales = usuarioLogueado.datosPersonales;
-      // usuarioEnRegistros.historialCompras = usuarioLogueado.historialCompras;
-    }
-    localStorage.setItem(
-      "usuarios registrados",
-      JSON.stringify(usuariosRegistrados)
-    );
-    clearUser();
-  };
+  const userLogged = JSON.parse(localStorage.getItem("usuario logueado"));
 
   useEffect(() => {
-    if (usuarioLogueado) {
-      setUser(usuarioLogueado.user);
+    if (userLogged) {
+      setUser(userLogged);
     } else {
       setUser(null);
     }
-  }, [usuarioLogueado, setUser]);
+  }, [userLogged, setUser]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-navbar navbar-personal">
@@ -94,20 +68,14 @@ const Navbar = () => {
               <img src={Personal} alt="" />
             </Link>
             <div className="d-flex">
-              {usuarioLogueado && user ? (
+              {userLogged && user ? (
                 <div className="d-flex align-items-center justify-content-between w-100 pt-3 pt-lg-0">
-                  <Link to="/profile" className="d-flex align-items-center">
-                    <img
-                      src={User}
-                      alt=""
-                      className="img-fluid icons-header me-2"
-                    />
-                    <p className="fs-7 text-light user-logged">{`Bienvenido ${user}`}</p>
-                  </Link>
                   <button
-                    className="bg-transparent border-0 ms-2"
-                    onClick={saveChanges}>
-                    <img src={LogOff} alt="" />
+                    className="bg-transparent border-0 ms-2 text-light opcion-seleccionada"
+                    onClick={clearUser}>
+                    Cerrar sesión
+                    <img src={LogOff} alt="" className="img-fluid ms-2" />
+                    <span></span>
                   </button>
                 </div>
               ) : (
