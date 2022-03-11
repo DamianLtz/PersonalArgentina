@@ -37,7 +37,7 @@ const Catalogo = () => {
                 <div className="d-flex flex-column justify-content-between h-100">
                   <img
                     src={celular.image}
-                    alt=""
+                    alt={celular.nombre}
                     className="product-preview-card"
                   />
                   {celular.tag ? (
