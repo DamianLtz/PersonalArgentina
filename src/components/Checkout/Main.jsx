@@ -153,10 +153,10 @@ const Main = () => {
         <p className="fw-light fs-4">Datos Personales</p>
         <Formik
           initialValues={{
-            nombre: "Juan",
-            apellido: "Perez",
-            email: "correo@correo.com",
-            direccion: "Rivadavia 135",
+            nombre: "",
+            apellido: "",
+            email: "",
+            direccion: "",
           }}
           validate={(valores) => {
             let errores = {};
