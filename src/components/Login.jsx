@@ -27,13 +27,11 @@ const Login = () => {
         const usuario = {
           user: parseInt(valores.telefono),
           password: parseInt(valores.password),
-          carrito: [
-            {
-              image: productoGuardado.image,
-              nombre: productoGuardado.nombre,
-              precio: productoGuardado.precio,
-            },
-          ],
+          carrito: {
+            image: productoGuardado.image,
+            nombre: productoGuardado.nombre,
+            precio: productoGuardado.precio,
+          },
         };
         const existeUsuario = users.find(
           (data) =>

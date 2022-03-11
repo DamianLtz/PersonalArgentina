@@ -80,10 +80,6 @@ const Main = () => {
         updateShoppingHistory(userExist.id, userShoppingHistory);
         navigate("/BuyMessage");
       }
-      // updateCartUser(userExist.id, []);
-      // updateUserInfo(userExist.id, newUserInfo);
-      // updateShoppingHistory(userExist.id, producto);
-      // navigate("/BuyMessage");
     }
   };
 

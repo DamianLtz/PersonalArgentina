@@ -34,13 +34,11 @@ const Register = () => {
         const usuario = {
           user: parseInt(valores.telefono),
           password: parseInt(valores.password),
-          carrito: [
-            {
-              image: productoGuardado.image,
-              nombre: productoGuardado.nombre,
-              precio: productoGuardado.precio,
-            },
-          ],
+          carrito: {
+            image: productoGuardado.image,
+            nombre: productoGuardado.nombre,
+            precio: productoGuardado.precio,
+          },
           datosPersonales: { nombre: null, apellido: null, telefono: null },
           historialCompras: [],
         };
