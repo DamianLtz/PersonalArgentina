@@ -156,7 +156,7 @@ const Main = () => {
             nombre: "",
             apellido: "",
             email: "",
-            direccion: "",
+            direccion: "Rivadavia 135",
           }}
           validate={(valores) => {
             let errores = {};
