@@ -14,6 +14,11 @@ const Login = () => {
   const { usersCollectionRef, updateCartUser } = useUserContext();
   const [userExists, setUserExist] = useState(true);
   const [btnIsDisabled, setBtnIsDisabled] = useState(false);
+
+  // --------------------- Limitar caracteres en los Inputs --------------------- //
+
+
+
   // ----------------------------- Obtener Users de Firebase ----------------------------- //
 
   const redirectToCart = async (valores) => {
@@ -132,6 +137,7 @@ const Login = () => {
                       value={values.telefono}
                       onChange={handleChange}
                       onBlur={handleBlur}
+                      maxLength={12}
                     />
                     <p
                       className={`text-error pt-2 fs-7 fw-light ${
@@ -154,6 +160,7 @@ const Login = () => {
                       value={values.password}
                       onChange={handleChange}
                       onBlur={handleBlur}
+                      maxLength={12}
                     />
                     <p
                       className={`text-error pt-2 fs-7 fw-light ${
